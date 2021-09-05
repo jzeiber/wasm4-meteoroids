@@ -8,9 +8,9 @@ void Spaceship_Initialize(struct Spaceship *s)
 	o->m_type=OBJECT_PLAYER;
 	
 	o->m_coordcount=3;
-	DPoint2D_Initialize_XY(&o->m_modelcoords[0],3.5,0.0);
-	DPoint2D_Initialize_XY(&o->m_modelcoords[1],-3.5,2.5);
-	DPoint2D_Initialize_XY(&o->m_modelcoords[2],-3.5,-2.5);
+	FPoint2D_Initialize_XY(&o->m_modelcoords[0],3.5,0.0);
+	FPoint2D_Initialize_XY(&o->m_modelcoords[1],-3.5,2.5);
+	FPoint2D_Initialize_XY(&o->m_modelcoords[2],-3.5,-2.5);
 	
-	DPoint2D_Initialize_XY(&o->m_pos,0,0);
+	FPoint2D_Initialize_XY(&o->m_pos,0,0);
 }

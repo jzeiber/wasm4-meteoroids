@@ -18,16 +18,16 @@ void UFO_Initialize(struct UFO *a)
 	
 	a->m_obj.m_scale=1.0;
 	a->m_obj.m_coordcount=10;
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[0], 1.5, 2.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[1], 3.5, 0.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[2], 5.5, 0.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[3], 6.5,-1.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[4], 3.5,-4.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[5],-3.5,-4.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[6],-6.5,-1.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[7],-5.5, 0.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[8],-3.5, 0.0);
-	DPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[9],-1.5, 2.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[0], 1.5, 2.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[1], 3.5, 0.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[2], 5.5, 0.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[3], 6.5,-1.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[4], 3.5,-4.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[5],-3.5,-4.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[6],-6.5,-1.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[7],-5.5, 0.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[8],-3.5, 0.0);
+	FPoint2D_Initialize_XY(&a->m_obj.m_modelcoords[9],-1.5, 2.0);
 }
 
 void UFO_Randomize(struct UFO *u)
@@ -53,8 +53,8 @@ void UFO_Randomize(struct UFO *u)
 		y=(_drand()<0.5 ? -y : SCREEN_SIZE+y);
 	}
 	
-	DPoint2D_SetPos(&u->m_obj.m_pos,x,y);
-	DPoint2D_SetPos(&u->m_obj.m_lastpos,x,y);
+	FPoint2D_SetPos(&u->m_obj.m_pos,x,y);
+	FPoint2D_SetPos(&u->m_obj.m_lastpos,x,y);
 	
 	u->m_obj.m_movrad=_atan2(-((_drand()*(double)SCREEN_SIZE)-y),(_drand()*(double)SCREEN_SIZE)-x);
 	u->m_obj.m_movspeed=(_drand()*0.4)+0.3;
@@ -80,8 +80,8 @@ void UFO_Update(struct Game *g, struct UFO *a, const int ticks)
 		{
 			a->m_tickssinceshot=0;
 			struct Projectile *p=Game_NextFreeProjectile(g);
-			DPoint2D_Initialize_DPoint2D(&p->m_obj.m_pos,&a->m_obj.m_pos);
-			DPoint2D_Initialize_DPoint2D(&p->m_obj.m_lastpos,&a->m_obj.m_pos);
+			FPoint2D_Initialize_FPoint2D(&p->m_obj.m_pos,&a->m_obj.m_pos);
+			FPoint2D_Initialize_FPoint2D(&p->m_obj.m_lastpos,&a->m_obj.m_pos);
 			p->m_obj.m_alive=true;
 			p->m_ticks=0;
 			p->m_maxticks=60;

@@ -50,6 +50,11 @@ void Game_Initialize(struct Game *g)
 	{
 		Projectile_Initialize(&g->m_projectiles[i]);
 	}
+	
+	for(int i=0; i<MAX_EXPLOSIONS; i++)
+	{
+		Explosion_Initialize(&g->m_explosions[i]);
+	}
 }
 
 void Game_Update(struct Game *g, const int ticks)
@@ -100,14 +105,14 @@ void Game_Update(struct Game *g, const int ticks)
 			p->m_obj.m_alive=true;
 			p->m_ticks=0;
 			p->m_maxticks=80;
-			DPoint2D_Initialize_DPoint2D(&p->m_obj.m_pos,&g->m_player.m_obj.m_pos);
+			FPoint2D_Initialize_FPoint2D(&p->m_obj.m_pos,&g->m_player.m_obj.m_pos);
 			// move points to front of player (model coord 0 is front of ship)
 			double dx=_cos(g->m_player.m_obj.m_rotrad)*g->m_player.m_obj.m_modelcoords[0].m_x;
 			double dy=-(_sin(g->m_player.m_obj.m_rotrad)*g->m_player.m_obj.m_modelcoords[0].m_x);
 			p->m_obj.m_pos.m_x+=dx;
 			p->m_obj.m_pos.m_y+=dy;
 			// set last pos to current pos
-			DPoint2D_Initialize_DPoint2D(&p->m_obj.m_lastpos,&p->m_obj.m_pos);
+			FPoint2D_Initialize_FPoint2D(&p->m_obj.m_lastpos,&p->m_obj.m_pos);
 			
 			p->m_obj.m_movrad=g->m_player.m_obj.m_rotrad;
 			p->m_obj.m_movspeed=1.8;
@@ -290,8 +295,8 @@ void Game_Update(struct Game *g, const int ticks)
 								struct GameObject go;
 								go.m_alive=true;
 								go.m_coordcount=2;
-								DPoint2D_Initialize_DPoint2D(&go.m_worldcoords[0],&g->m_projectiles[i].m_obj.m_lastpos);
-								DPoint2D_Initialize_DPoint2D(&go.m_worldcoords[1],&g->m_projectiles[i].m_obj.m_pos);
+								FPoint2D_Initialize_FPoint2D(&go.m_worldcoords[0],&g->m_projectiles[i].m_obj.m_lastpos);
+								FPoint2D_Initialize_FPoint2D(&go.m_worldcoords[1],&g->m_projectiles[i].m_obj.m_pos);
 								if(GameObject_CollisionWrapped(&go,&g->m_asteroids[j].m_obj,SCREEN_SIZE,SCREEN_SIZE)==true)
 								{
 									collide=true;
@@ -302,6 +307,7 @@ void Game_Update(struct Game *g, const int ticks)
 								// break apart large asteroid or destroy smaller one and add to score
 
 								Sound_DestroyAsteroid();
+								Explosion_Create(g,&g->m_asteroids[j].m_obj);
 								
 								g->m_asteroids[j].m_obj.m_alive=false;
 								g->m_projectiles[i].m_obj.m_alive=false;
@@ -351,6 +357,7 @@ void Game_Update(struct Game *g, const int ticks)
 					if(g->m_projectiles[i].m_obj.m_alive==true && g->m_projectiles[i].m_owner!=OWNER_UFO && GameObject_Collision(&g->m_projectiles[i].m_obj,&g->m_ufo.m_obj)==true)
 					{
 						// TODO - play sound
+						Explosion_Create(g,&g->m_ufo.m_obj);
 						g->m_projectiles[i].m_obj.m_alive=false;
 						g->m_score+=1000;
 						g->m_ufo.m_obj.m_alive=false;
@@ -380,6 +387,17 @@ void Game_Update(struct Game *g, const int ticks)
 			}
 			
 		}
+		
+		// update explosions - outside play loop to continue explosion when in wait state
+		for(int i=0; i<MAX_EXPLOSIONS; i++)
+		{
+			if(g->m_explosions[i].m_obj.m_alive==true)
+			{
+				Explosion_Update(&g->m_explosions[i],ticks);
+				GameObject_CalculateWorldCoords(&g->m_explosions[i].m_obj);
+			}
+		}
+		
 	break;
 	case STATE_GAMEOVER:
 		
@@ -398,6 +416,13 @@ void Game_Draw(struct Game *g)
 		break;
 	case STATE_GAME:
 		*DRAW_COLORS=0x02;
+		for(int i=0; i<MAX_EXPLOSIONS; i++)
+		{
+			if(g->m_explosions[i].m_obj.m_alive==true)
+			{
+				GameObject_Draw(&g->m_explosions[i].m_obj);
+			}
+		}
 		for(int i=0; i<MAX_ASTEROIDS; i++)
 		{
 			if(g->m_asteroids[i].m_obj.m_alive==true)
@@ -444,7 +469,7 @@ void Game_NewGame(struct Game *g)
 	g->m_score=0;
 	g->m_tickssinceufo=0;
 	g->m_player.m_obj.m_alive=true;
-	DPoint2D_Initialize_XY(&g->m_player.m_obj.m_pos,SCREEN_SIZE/2.0,SCREEN_SIZE/2.0);
+	FPoint2D_Initialize_XY(&g->m_player.m_obj.m_pos,SCREEN_SIZE/2.0,SCREEN_SIZE/2.0);
 	g->m_player.m_obj.m_rotrad=_drand()*2.0*M_PI;
 	g->m_player.m_obj.m_rotspeed=0;
 	g->m_player.m_obj.m_movrad=0;
@@ -469,6 +494,12 @@ void Game_NewGame(struct Game *g)
 	for(int i=10; i<MAX_ASTEROIDS; i++)
 	{
 		g->m_asteroids[i].m_obj.m_alive=false;
+	}
+	
+	// reset explosions
+	for(int i=0; i<MAX_EXPLOSIONS; i++)
+	{
+		g->m_explosions[i].m_obj.m_alive=false;
 	}
 	
 	// reset ufo
@@ -508,6 +539,18 @@ struct Asteroid *Game_NextFreeAsteroid(struct Game *g)
 		if(g->m_asteroids[i].m_obj.m_alive==false)
 		{
 			return &g->m_asteroids[i];
+		}
+	}
+	return NULL;
+}
+
+struct Explosion *Game_NextFreeExplosion(struct Game *g)
+{
+	for(int i=0; i<MAX_EXPLOSIONS; i++)
+	{
+		if(g->m_explosions[i].m_obj.m_alive==false)
+		{
+			return &g->m_explosions[i];
 		}
 	}
 	return NULL;
@@ -579,6 +622,7 @@ void Game_HandlePlayerCollision(struct Game *g, struct GameObject *o)
 	o;	// unused for now;
 
 	Sound_PlayerCollide();
+	Explosion_Create(g,&g->m_player.m_obj);
 	
 	g->m_lives--;
 	if(g->m_lives>=0)

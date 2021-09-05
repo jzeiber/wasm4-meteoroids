@@ -2,11 +2,13 @@
 
 #define MAX_ASTEROIDS 100
 #define MAX_PROJECTILES 20
+#define MAX_EXPLOSIONS 30
 
 #include "input.h"
 #include "asteroid.h"
 #include "spaceship.h"
 #include "projectile.h"
+#include "explosion.h"
 #include "ufo.h"
 #include "title.h"
 
@@ -43,6 +45,7 @@ struct Game
 	struct UFO m_ufo;
 	struct Asteroid m_asteroids[MAX_ASTEROIDS];
 	struct Projectile m_projectiles[MAX_PROJECTILES];
+	struct Explosion m_explosions[MAX_EXPLOSIONS];
 	
 };
 
@@ -54,3 +57,4 @@ void Game_ResetStateAndWait(struct Game *g);
 void Game_HandlePlayerCollision(struct Game *g, struct GameObject *o);
 struct Projectile *Game_NextFreeProjectile(struct Game *g);	// find next free projectile, returns oldest if all are alive
 struct Asteroid *Game_NextFreeAsteroid(struct Game *g);		// find next dead asteroid, returns NULL if all are alive
+struct Explosion *Game_NextFreeExplosion(struct Game *g);	// find next dead explosion, returns NULL if all are alive

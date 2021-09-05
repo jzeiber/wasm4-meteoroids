@@ -35,7 +35,7 @@ void Asteroid_Randomize(struct Asteroid *a, bool wholescreen)
 	if(wholescreen==true)	// spawn anywhere on screen
 	{
 		a->m_onscreen=true;
-		DPoint2D_SetPos(&o->m_pos,_drand()*(double)SCREEN_SIZE,_drand()*(double)SCREEN_SIZE);
+		FPoint2D_SetPos(&o->m_pos,_drand()*(double)SCREEN_SIZE,_drand()*(double)SCREEN_SIZE);
 		o->m_movrad=_drand()*2.0*M_PI;
 		o->m_movspeed=(_drand()*0.5)+0.1;
 	}
@@ -59,7 +59,7 @@ void Asteroid_Randomize(struct Asteroid *a, bool wholescreen)
 		}
 		
 
-		DPoint2D_SetPos(&o->m_pos,x,y);
+		FPoint2D_SetPos(&o->m_pos,x,y);
 		o->m_movspeed=(_drand()*0.5)+0.1;
 		o->m_movrad=_atan2(-((_drand()*(double)SCREEN_SIZE)-y),(_drand()*(double)SCREEN_SIZE)-x);
 	}
@@ -70,7 +70,7 @@ void Asteroid_Randomize(struct Asteroid *a, bool wholescreen)
 		{
 			double dist=(_drand()*0.4)+0.5;
 
-			DPoint2D_SetPos(&o->m_modelcoords[i],dist*_cos(rad),dist*_sin(rad));
+			FPoint2D_SetPos(&o->m_modelcoords[i],dist*_cos(rad),dist*_sin(rad));
 			o->m_coordcount++;
 			
 			rad+=(_drand()/5.0)+0.4;

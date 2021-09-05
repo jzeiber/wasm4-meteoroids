@@ -9,7 +9,8 @@ OBJECT_NONE=0,
 OBJECT_PLAYER=1,
 OBJECT_ASTEROID=2,
 OBJECT_ALIEN=3,
-OBJECT_PROJECTILE=4
+OBJECT_PROJECTILE=4,
+OBJECT_EXPLOSION=5
 };
 
 struct GameObject
@@ -17,10 +18,10 @@ struct GameObject
 	uint8_t m_type;
 	bool m_alive;
 	double m_scale;
-	struct DPoint2D m_lastpos;
-	struct DPoint2D m_pos;
-	struct DPoint2D m_modelcoords[10];
-	struct DPoint2D m_worldcoords[10];
+	struct FPoint2D m_lastpos;
+	struct FPoint2D m_pos;
+	struct FPoint2D m_modelcoords[10];
+	struct FPoint2D m_worldcoords[10];
 	int m_coordcount;
 	double m_rotrad;
 	double m_rotspeed;

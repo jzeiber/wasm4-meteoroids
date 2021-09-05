@@ -9,8 +9,8 @@ void GameObject_Initialize(struct GameObject *o)
 	o->m_type=OBJECT_NONE;
 	o->m_alive=false;
 	o->m_scale=1.0;
-	DPoint2D_Initialize(&o->m_lastpos);
-	DPoint2D_Initialize(&o->m_pos);
+	FPoint2D_Initialize(&o->m_lastpos);
+	FPoint2D_Initialize(&o->m_pos);
 	o->m_coordcount=0;
 	o->m_rotrad=0;
 	o->m_rotspeed=0;
@@ -18,8 +18,8 @@ void GameObject_Initialize(struct GameObject *o)
 	o->m_movspeed=0;
 	for(int i=0; i<10; i++)
 	{
-		DPoint2D_Initialize(&o->m_modelcoords[i]);
-		DPoint2D_Initialize(&o->m_worldcoords[i]);
+		FPoint2D_Initialize(&o->m_modelcoords[i]);
+		FPoint2D_Initialize(&o->m_worldcoords[i]);
 	}
 }
 
@@ -28,8 +28,8 @@ void GameObject_Initialize_GameObject(struct GameObject *o, const struct GameObj
 	o->m_type=rhs->m_type;
 	o->m_alive=rhs->m_alive;
 	o->m_scale=rhs->m_scale;
-	DPoint2D_Initialize_DPoint2D(&o->m_lastpos,&rhs->m_lastpos);
-	DPoint2D_Initialize_DPoint2D(&o->m_pos,&rhs->m_pos);
+	FPoint2D_Initialize_FPoint2D(&o->m_lastpos,&rhs->m_lastpos);
+	FPoint2D_Initialize_FPoint2D(&o->m_pos,&rhs->m_pos);
 	o->m_coordcount=rhs->m_coordcount;
 	o->m_rotrad=rhs->m_rotrad;
 	o->m_rotspeed=rhs->m_rotspeed;
@@ -37,8 +37,8 @@ void GameObject_Initialize_GameObject(struct GameObject *o, const struct GameObj
 	o->m_movspeed=rhs->m_movspeed;
 	for(int i=0; i<10; i++)
 	{
-		DPoint2D_Initialize_DPoint2D(&o->m_modelcoords[i],&rhs->m_modelcoords[i]);
-		DPoint2D_Initialize_DPoint2D(&o->m_worldcoords[i],&rhs->m_worldcoords[i]);
+		FPoint2D_Initialize_FPoint2D(&o->m_modelcoords[i],&rhs->m_modelcoords[i]);
+		FPoint2D_Initialize_FPoint2D(&o->m_worldcoords[i],&rhs->m_worldcoords[i]);
 	}
 }
 
@@ -49,12 +49,12 @@ void GameObject_Update(struct GameObject *o, const int ticks)
 		return;
 	}
 	
-	DPoint2D_Initialize_DPoint2D(&o->m_lastpos,&o->m_pos);
+	FPoint2D_Initialize_FPoint2D(&o->m_lastpos,&o->m_pos);
 	
 	double dx=_cos(o->m_movrad)*o->m_movspeed*(double)ticks;
 	double dy=-(_sin(o->m_movrad)*o->m_movspeed*(double)ticks);	// y reversed with respect to screen drawing	
 
-	DPoint2D_OffsetPos(&o->m_pos,dx,dy);
+	FPoint2D_OffsetPos(&o->m_pos,dx,dy);
 	
 	//rotate and normalize
 	o->m_rotrad+=(o->m_rotspeed*(double)ticks);
@@ -73,23 +73,23 @@ void GameObject_WrapPos(struct GameObject *o, const int w, const int h)
 {
 	while(o->m_pos.m_x<0)
 	{
-		DPoint2D_OffsetPos(&o->m_pos,w,0);
-		DPoint2D_OffsetPos(&o->m_lastpos,w,0);
+		FPoint2D_OffsetPos(&o->m_pos,w,0);
+		FPoint2D_OffsetPos(&o->m_lastpos,w,0);
 	}
 	while(o->m_pos.m_x>=w)
 	{
-		DPoint2D_OffsetPos(&o->m_pos,-w,0);
-		DPoint2D_OffsetPos(&o->m_lastpos,-w,0);
+		FPoint2D_OffsetPos(&o->m_pos,-w,0);
+		FPoint2D_OffsetPos(&o->m_lastpos,-w,0);
 	}
 	while(o->m_pos.m_y<0)
 	{
-		DPoint2D_OffsetPos(&o->m_pos,0,h);
-		DPoint2D_OffsetPos(&o->m_lastpos,0,h);
+		FPoint2D_OffsetPos(&o->m_pos,0,h);
+		FPoint2D_OffsetPos(&o->m_lastpos,0,h);
 	}
 	while(o->m_pos.m_y>=h)
 	{
-		DPoint2D_OffsetPos(&o->m_pos,0,-h);
-		DPoint2D_OffsetPos(&o->m_lastpos,0,-h);
+		FPoint2D_OffsetPos(&o->m_pos,0,-h);
+		FPoint2D_OffsetPos(&o->m_lastpos,0,-h);
 	}
 }
 
@@ -116,7 +116,7 @@ bool GameObject_Collision(struct GameObject *o, const struct GameObject *rhs)
 	// point and line
 	if((o->m_coordcount==1 && rhs->m_coordcount==2) || (o->m_coordcount==2 && rhs->m_coordcount==1))
 	{
-		const struct DPoint2D *p1, *p2, *p3;
+		const struct FPoint2D *p1, *p2, *p3;
 		if(o->m_coordcount==1)
 		{
 			p1=&rhs->m_worldcoords[0];
@@ -135,7 +135,7 @@ bool GameObject_Collision(struct GameObject *o, const struct GameObject *rhs)
 	// point and polygon
 	if((o->m_coordcount==1 && rhs->m_coordcount>2) || (o->m_coordcount>2 && rhs->m_coordcount==1))
 	{
-		const struct DPoint2D *p1;
+		const struct FPoint2D *p1;
 		const struct GameObject *obj;
 		
 		if(o->m_coordcount==1)
@@ -152,12 +152,12 @@ bool GameObject_Collision(struct GameObject *o, const struct GameObject *rhs)
 		for(int i=0; i<obj->m_coordcount-1; i++)
 		{
 			// triangle formed by outer line segment and internal position
-			if(DPoint2D_WithinTriangle(p1,&obj->m_worldcoords[i],&obj->m_worldcoords[i+1],&obj->m_pos))
+			if(FPoint2D_WithinTriangle(p1,&obj->m_worldcoords[i],&obj->m_worldcoords[i+1],&obj->m_pos))
 			{
 				return true;
 			}
 		}
-		if(DPoint2D_WithinTriangle(p1,&obj->m_worldcoords[obj->m_coordcount-1],&obj->m_worldcoords[0],&obj->m_pos))
+		if(FPoint2D_WithinTriangle(p1,&obj->m_worldcoords[obj->m_coordcount-1],&obj->m_worldcoords[0],&obj->m_pos))
 		{
 			return true;
 		}
@@ -202,12 +202,12 @@ bool GameObject_Collision(struct GameObject *o, const struct GameObject *rhs)
 	{
 		for(int j=0; j<rhs->m_coordcount-1; j++)
 		{
-			if(DPoint2D_WithinTriangle(&o->m_worldcoords[i],&rhs->m_worldcoords[j],&rhs->m_worldcoords[j+1],&rhs->m_pos))
+			if(FPoint2D_WithinTriangle(&o->m_worldcoords[i],&rhs->m_worldcoords[j],&rhs->m_worldcoords[j+1],&rhs->m_pos))
 			{
 				return true;
 			}
 		}
-		if(DPoint2D_WithinTriangle(&o->m_worldcoords[i],&rhs->m_worldcoords[rhs->m_coordcount-1],&rhs->m_worldcoords[0],&rhs->m_pos))
+		if(FPoint2D_WithinTriangle(&o->m_worldcoords[i],&rhs->m_worldcoords[rhs->m_coordcount-1],&rhs->m_worldcoords[0],&rhs->m_pos))
 		{
 			return true;
 		}
@@ -216,12 +216,12 @@ bool GameObject_Collision(struct GameObject *o, const struct GameObject *rhs)
 	{
 		for(int j=0; j<o->m_coordcount-1; j++)
 		{
-			if(DPoint2D_WithinTriangle(&rhs->m_worldcoords[i],&o->m_worldcoords[j],&o->m_worldcoords[j+1],&o->m_pos))
+			if(FPoint2D_WithinTriangle(&rhs->m_worldcoords[i],&o->m_worldcoords[j],&o->m_worldcoords[j+1],&o->m_pos))
 			{
 				return true;
 			}
 		}
-		if(DPoint2D_WithinTriangle(&rhs->m_worldcoords[i],&o->m_worldcoords[o->m_coordcount-1],&o->m_worldcoords[0],&o->m_pos))
+		if(FPoint2D_WithinTriangle(&rhs->m_worldcoords[i],&o->m_worldcoords[o->m_coordcount-1],&o->m_worldcoords[0],&o->m_pos))
 		{
 			return true;
 		}
@@ -332,7 +332,7 @@ void GameObject_CalculateWorldCoords(struct GameObject *o)
 	{
 		double x=o->m_pos.m_x+(o->m_scale*((o->m_modelcoords[i].m_x*_cos(o->m_rotrad))-(o->m_modelcoords[i].m_y*_sin(o->m_rotrad))));
 		double y=o->m_pos.m_y-(o->m_scale*((o->m_modelcoords[i].m_x*_sin(o->m_rotrad))+(o->m_modelcoords[i].m_y*_cos(o->m_rotrad))));
-		DPoint2D_Initialize_XY(&o->m_worldcoords[i],x,y);
+		FPoint2D_Initialize_XY(&o->m_worldcoords[i],x,y);
 	}
 }
 

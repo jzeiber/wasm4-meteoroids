@@ -9,7 +9,7 @@ void Projectile_Initialize(struct Projectile *p)
 	p->m_maxticks=0;
 	
 	p->m_obj.m_coordcount=1;
-	DPoint2D_Initialize_XY(&p->m_obj.m_modelcoords[0],0,0);
+	FPoint2D_Initialize_XY(&p->m_obj.m_modelcoords[0],0,0);
 }
 
 void Projectile_Update(struct Projectile *p, const int ticks)
