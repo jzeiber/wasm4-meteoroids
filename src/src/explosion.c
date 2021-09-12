@@ -51,7 +51,7 @@ void Explosion_Create(struct Game *g, struct GameObject *o)
 			const double len=_sqrt((o->m_worldcoords[i].m_x-o->m_worldcoords[ni].m_x)*(o->m_worldcoords[i].m_x-o->m_worldcoords[ni].m_x)+(o->m_worldcoords[i].m_y-o->m_worldcoords[ni].m_y)*(o->m_worldcoords[i].m_y-o->m_worldcoords[ni].m_y));
 			double rad=_atan2(-(o->m_worldcoords[i].m_y-o->m_worldcoords[ni].m_y),(o->m_worldcoords[i].m_x-o->m_worldcoords[ni].m_x));
 			e->m_obj.m_rotrad=rad;
-			e->m_obj.m_rotspeed=(_drand()*0.1)-0.5;
+			e->m_obj.m_rotspeed=(_drand()*1.0)-0.5;
 			e->m_obj.m_coordcount=2;
 			e->m_obj.m_modelcoords[0].m_x=-(len/2.0);
 			e->m_obj.m_modelcoords[0].m_y=0;
