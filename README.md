@@ -8,6 +8,10 @@ Built in C using WASM-4 WebAssembly Fantasy Console https://wasm4.org/
 
 Try to destroy as many meteoroids as you can before you run out of lives.  Your score is displayed in the upper left of the screen, and the remaining lives in the upper right.
 
+## Play
+
+https://jzeiber.github.io/wasm4-meteoroids/bundle/
+
 ## Controls
 
  - Use gamepad/keyboard or mouse to control the spaceship
