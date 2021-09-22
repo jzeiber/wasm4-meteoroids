@@ -246,6 +246,10 @@ bool GameObject_CollisionWrapped(struct GameObject *o, const struct GameObject *
 		{
 			if(wy!=0 && wx!=0)
 			{
+				wo.m_pos.m_x=o->m_pos.m_x+(double)wx;
+				wo.m_pos.m_y=o->m_pos.m_y+(double)wy;
+				wo.m_lastpos.m_x=o->m_lastpos.m_x+(double)wx;
+				wo.m_lastpos.m_y=o->m_lastpos.m_y+(double)wy;
 				for(int i=0; i<wo.m_coordcount; i++)
 				{
 					wo.m_worldcoords[i].m_x=o->m_worldcoords[i].m_x+(double)wx;

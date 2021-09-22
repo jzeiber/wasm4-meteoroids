@@ -11,12 +11,12 @@ CFLAGS = -std=c99 -nostdlib --target=wasm32 -W -Wall -Wextra -Werror -Wno-unused
 CXXFLAGS = -std=c++17 -nostdlib --target=wasm32 -W -Wall -Wextra -Werror -Wno-unused -MMD -MP
 ifeq ($(DEBUG), 1)
 	CFLAGS += -DDEBUG -O0 -g
-	CXXFLAGS += -DDEBUG -OO -g
+	CXXFLAGS += -DDEBUG -O0 -g
 else
-#	CFLAGS += -DNDEBUG -Oz -flto
-	CFLAGS += -DNDEBUG -Oz
-#	CXXFLAGS += -DNDEBUG -Oz -flto
-	CXXFLAGS += -DNDEBUG -Oz
+	CFLAGS += -DNDEBUG -Oz -flto
+#	CFLAGS += -DNDEBUG -Oz
+	CXXFLAGS += -DNDEBUG -Oz -flto
+#	CXXFLAGS += -DNDEBUG -Oz
 endif
 
 # Linker flags
