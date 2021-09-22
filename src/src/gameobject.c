@@ -75,21 +75,37 @@ void GameObject_WrapPos(struct GameObject *o, const int w, const int h)
 	{
 		FPoint2D_OffsetPos(&o->m_pos,w,0);
 		FPoint2D_OffsetPos(&o->m_lastpos,w,0);
+		for(int i=0; i<o->m_coordcount; i++)
+		{
+			FPoint2D_OffsetPos(&o->m_worldcoords[i],w,0);
+		}
 	}
 	while(o->m_pos.m_x>=w)
 	{
 		FPoint2D_OffsetPos(&o->m_pos,-w,0);
 		FPoint2D_OffsetPos(&o->m_lastpos,-w,0);
+		for(int i=0; i<o->m_coordcount; i++)
+		{
+			FPoint2D_OffsetPos(&o->m_worldcoords[i],-w,0);
+		}
 	}
 	while(o->m_pos.m_y<0)
 	{
 		FPoint2D_OffsetPos(&o->m_pos,0,h);
 		FPoint2D_OffsetPos(&o->m_lastpos,0,h);
+		for(int i=0; i<o->m_coordcount; i++)
+		{
+			FPoint2D_OffsetPos(&o->m_worldcoords[i],0,h);
+		}
 	}
 	while(o->m_pos.m_y>=h)
 	{
 		FPoint2D_OffsetPos(&o->m_pos,0,-h);
 		FPoint2D_OffsetPos(&o->m_lastpos,0,-h);
+		for(int i=0; i<o->m_coordcount; i++)
+		{
+			FPoint2D_OffsetPos(&o->m_worldcoords[i],0,-h);
+		}
 	}
 }
 
