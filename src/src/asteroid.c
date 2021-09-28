@@ -73,7 +73,7 @@ void Asteroid_Randomize(struct Asteroid *a, bool wholescreen)
 			FPoint2D_SetPos(&o->m_modelcoords[i],dist*_cos(rad),dist*_sin(rad));
 			o->m_coordcount++;
 			
-			rad+=(_drand()/4.5)+0.45;
+			rad+=(_drand()/3.0)+0.45;
 		}
 	}
 }

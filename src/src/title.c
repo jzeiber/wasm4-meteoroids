@@ -66,5 +66,5 @@ void Title_Draw(struct Title *t, struct Game *g)
 	snprintf(buff,64,"%d",g->m_highscore);
 	text(buff,40,110);
 	
-	text("v0.2",SCREEN_SIZE-(4*8)-2,SCREEN_SIZE-10);
+	text("v0.3",SCREEN_SIZE-(4*8)-2,SCREEN_SIZE-10);
 }

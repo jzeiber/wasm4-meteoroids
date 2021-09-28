@@ -58,3 +58,4 @@ void Game_HandlePlayerCollision(struct Game *g, struct GameObject *o);
 struct Projectile *Game_NextFreeProjectile(struct Game *g);	// find next free projectile, returns oldest if all are alive
 struct Asteroid *Game_NextFreeAsteroid(struct Game *g);		// find next dead asteroid, returns NULL if all are alive
 struct Explosion *Game_NextFreeExplosion(struct Game *g);	// find next dead explosion, returns NULL if all are alive
+void GameOver_Draw(struct Game *g);

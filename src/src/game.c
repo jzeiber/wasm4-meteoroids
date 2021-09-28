@@ -400,7 +400,25 @@ void Game_Update(struct Game *g, const int ticks)
 		
 	break;
 	case STATE_GAMEOVER:
-		
+		if(g->m_waitticks>=60 && (Input_MouseButtonClick(&g->m_input,1)==true || Input_GamepadButtonPress(&g->m_input,1)))
+		{
+			Title_Initialize(&title,g);
+			g->m_state=STATE_TITLE;
+			g->m_waitticks=0;
+
+			// reset last buttons so we don't fire right away
+			g->m_input.m_lastmousebuttons=g->m_input.m_mousebuttons;
+			g->m_input.m_lastgamepad=g->m_input.m_gamepad;
+		}
+		// only update explosion when in game over state
+		for(int i=0; i<MAX_EXPLOSIONS; i++)
+		{
+			if(g->m_explosions[i].m_obj.m_alive==true)
+			{
+				Explosion_Update(&g->m_explosions[i],ticks);
+				GameObject_CalculateWorldCoords(&g->m_explosions[i].m_obj);
+			}
+		}
 	break;
 	}
 	
@@ -458,7 +476,7 @@ void Game_Draw(struct Game *g)
 		
 		break;
 	case STATE_GAMEOVER:
-		
+		GameOver_Draw(g);
 		break;
 	}
 }
@@ -647,7 +665,38 @@ void Game_HandlePlayerCollision(struct Game *g, struct GameObject *o)
 			}
 			diskw(buff,12);
 		}
-		Title_Initialize(&title,g);
-		g->m_state=STATE_TITLE;
+		g->m_state=STATE_GAMEOVER;
+		g->m_playstate=STATE_WAIT;
+		g->m_waitticks=0;
 	}
+}
+
+void GameOver_Draw(struct Game *g)
+{
+	*DRAW_COLORS=0x02;
+	for(int i=0; i<MAX_ASTEROIDS; i++)
+	{
+		if(g->m_asteroids[i].m_obj.m_alive)
+		{
+			GameObject_DrawWrapped(&g->m_asteroids[i].m_obj,SCREEN_SIZE,SCREEN_SIZE);
+		}
+	}
+	for(int i=0; i<MAX_EXPLOSIONS; i++)
+	{
+		if(g->m_explosions[i].m_obj.m_alive==true)
+		{
+			GameObject_Draw(&g->m_explosions[i].m_obj);
+		}
+	}
+	
+	*DRAW_COLORS=0x04;
+	text("Game Over",44,30);
+	
+	text("Score",60,60);
+	snprintf(buff,64,"%d",g->m_score);
+	text(buff,40,70);
+	
+	text("High Score",40,100);
+	snprintf(buff,64,"%d",g->m_highscore);
+	text(buff,40,110);
 }
