@@ -66,7 +66,7 @@ void Asteroid_Randomize(struct Asteroid *a, bool wholescreen)
 	
 	for(int i=0; i<10; i++)
 	{
-		if(rad<=2.0*M_PI)
+		if(rad<=(2.0*M_PI)-0.45)
 		{
 			double dist=(_drand()*0.4)+0.5;
 
